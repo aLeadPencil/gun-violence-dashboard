@@ -1,0 +1,196 @@
+/* Base */
+html {
+    font: 100%/1.5 Georgia, serif;
+    background-color: #4e97c8;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+}
+
+
+/* Index */
+.nav-container {
+    background-color: #4e97c8;
+    text-align: center;
+    padding-bottom: 1vh;
+}
+
+.nav {
+    background-color: #ffffff;
+    display: inline-block;
+    padding: 20px 50px;
+    border-radius: 4px;
+}
+
+.nav a {
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 20px;
+    width: 100px;
+    color: #4e97c8;
+    border-radius: 10px;
+    padding: 0.5em 0.75em;
+}
+
+.nav a:hover {
+    background-color: #8abce0;
+}
+
+.title {
+    color: #ffffff;
+    text-align: center;
+}
+
+.desc {
+    color: #ffffff;
+    text-align: center;
+}
+
+.desc a {
+    color: #D3D3D3;
+    text-decoration: none;
+}
+
+.desc a:hover {
+    color: #ffffff;
+}
+
+
+/* Contact */
+.contact-info ul {
+    text-align: center;
+    padding: 0;
+    list-style-type: none;
+}
+
+.contact-info a {
+    color: #ffffff;
+    display: inline-block;
+    padding: 0.5em 0.75em;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    color: #D3D3D3;
+}
+
+
+/* Description */
+.desc p {
+    padding: 1vh 2vw;
+}
+
+
+/* Heatmap + Top States + Top Cities */
+.heatmap-state-city-container {
+    display: flex;
+    flex-shrink: 1;
+    justify-content: center;
+    padding: 10px 0px;
+}
+
+.state-city-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 1;
+    margin-left: 1vw;
+}
+
+.incident-heatmap {
+    display: flex;
+    box-shadow: 2px 2px 2px #165a72;
+}
+
+.top-states {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin-bottom: 2vh;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+.top-cities {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+
+/* Incidents per day, month, year */
+.time-container {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 1;
+    padding: 10px 0px;
+}
+
+.incidents-day {
+    display: flex;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+.incidents-month {
+    display: flex;
+    margin-left: 0.5vw;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+.incidents-year {
+    display: flex;
+    margin-left: 0.5vw;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+/* .top-locations {
+    display: flex;
+    margin-left: 0.5vw;
+    box-shadow: 2px 2px 2px #165a72
+} */
+
+
+/* Age Distribution */
+.age-distribution-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0px;
+}
+
+.age-distribution {
+    display: flex;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+
+/* Gender + Gun Info Distributions */
+.gender-gun-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0px;
+    padding-bottom: 20px;
+}
+
+.gun-type-distribution {
+    display: flex;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+.gun-count-distribution {
+    display: flex;
+    margin-left: 0.33vw;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+.suspect-gender-distribution {
+    display: flex;
+    margin-left: 0.33vw;
+    box-shadow: 2px 2px 2px #165a72
+}
+
+.victim-gender-distribution {
+    display: flex;
+    margin-left: 0.33vw;
+    box-shadow: 2px 2px 2px #165a72
+}
