@@ -3,21 +3,11 @@ import pandas as pd
 import dash_html_components as html
 from nav import navbar
 
-# Load in data
-def cleaned_data_reader():
-    cleaned_data_1 = pd.read_csv('./data/cleaned_data/cleaned_data_1.csv')
-    cleaned_data_2 = pd.read_csv('./data/cleaned_data/cleaned_data_2.csv')
-    
-    data = pd.concat([cleaned_data_1, cleaned_data_2], ignore_index = True)
-
-    return data
-
-
-data = cleaned_data_reader()
-data = data[0:500]
 
 # Generate data table preview
-def generate_table(dataframe):
+def generate_table():
+    data = pd.read_csv('./data/cleaned_data/cleaned_data_1.csv', nrows = 500)
+
     generated_table = dash_table.DataTable(
         style_cell = {
             'whiteSpace': 'normal',
@@ -33,7 +23,7 @@ def generate_table(dataframe):
 
     return generated_table
 
-generated_table = generate_table(data)
+generated_table = generate_table()
 
 
 # Data Preview Layout
