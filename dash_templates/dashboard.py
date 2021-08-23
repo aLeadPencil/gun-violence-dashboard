@@ -31,11 +31,6 @@ def cleaned_data_reader():
     return data
 
 data = cleaned_data_reader()
-data_2014 = pd.read_csv('./data/cleaned_data/cleaned_2014_data.csv')
-data_2015 = pd.read_csv('./data/cleaned_data/cleaned_2015_data.csv')
-data_2016 = pd.read_csv('./data/cleaned_data/cleaned_2016_data.csv')
-data_2017 = pd.read_csv('./data/cleaned_data/cleaned_2017_data.csv')
-
 
 # Heatmap for incidents across the US -----------------------------------#
 def heatmap_generator(data):
@@ -200,7 +195,12 @@ incidents_per_day = incidents_per_day_generator(data)
 
 
 # Barchart for incidents per month ------------------------------------#
-def incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_2017):
+def incidents_per_month_generator(data):
+    data_2014 = pd.read_csv('./data/cleaned_data/cleaned_2014_data.csv')
+    data_2015 = pd.read_csv('./data/cleaned_data/cleaned_2015_data.csv')
+    data_2016 = pd.read_csv('./data/cleaned_data/cleaned_2016_data.csv')
+    data_2017 = pd.read_csv('./data/cleaned_data/cleaned_2017_data.csv')
+
     month_counts_total = Counter(data['month'])
     month_counts_2014 = Counter(data_2014['month'])
     month_counts_2015 = Counter(data_2015['month'])
@@ -267,7 +267,7 @@ def incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_20
 
     return incidents_per_month
 
-incidents_per_month = incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_2017)
+incidents_per_month = incidents_per_month_generator(data)
 
 
 # Barchart for incidents per year -------------------------------------#
