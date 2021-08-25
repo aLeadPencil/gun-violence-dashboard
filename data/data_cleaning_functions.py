@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import calendar
 
 columns_to_drop = [
@@ -13,8 +14,34 @@ columns_to_drop = [
     'state_house_district',
     'state_senate_district', 
     'notes', 
-    'gun_stolen'
+    'gun_stolen',
+    'latitude',
+    'longitude',
+    'incident_characteristics',
+    'location_description',
+    'participant_relationship',
+    'participant_age_group'
 ]
+
+
+column_dtypes = {
+    'date': object,
+    'state': 'string',
+    'city_or_county': 'category',
+    'n_killed': 'int16',
+    'n_injured': 'int16',
+    'gun_type': object,
+    'n_guns_involved': object,
+    'participant_age': object,
+    'participant_gender': object,
+    'participant_status': object,
+    'participant_type': object,
+    'state_code': 'category',
+    'weekday': 'category',
+    'month': 'category',
+    'year': 'int16'
+}
+
 
 us_state_abbrev = {
     'Alabama': 'AL',
@@ -75,6 +102,7 @@ us_state_abbrev = {
     'Wyoming': 'WY'
 }
 
+
 gun_map = {
     'Handgun': 'Handgun',
     '25 Auto': 'Handgun',
@@ -104,6 +132,7 @@ gun_map = {
     'Other': 'Other'
 }
 
+
 weekday_map = {
     0: 'Mon',
     1: 'Tue',
@@ -122,16 +151,15 @@ def original_data_reader():
     Fill NA values with 'Unknown'
     """
 
-    original_data_1 = pd.read_csv('data/original_data/original_data_1.csv')
-    original_data_2 = pd.read_csv('data/original_data/original_data_2.csv')
-    original_data_3 = pd.read_csv('data/original_data/original_data_3.csv')
-    original_data_4 = pd.read_csv('data/original_data/original_data_4.csv')
+    original_data_1 = pd.read_csv('data/original_data/original_data_1.csv', dtype = column_dtypes)
+    original_data_2 = pd.read_csv('data/original_data/original_data_2.csv', dtype = column_dtypes)
+    original_data_3 = pd.read_csv('data/original_data/original_data_3.csv', dtype = column_dtypes)
+    original_data_4 = pd.read_csv('data/original_data/original_data_4.csv', dtype = column_dtypes)
 
     data = pd.concat([original_data_1, original_data_2, original_data_3, original_data_4], ignore_index = True)
 
     data = data.drop(columns_to_drop, 1)
     data = data[(data['date'] >= '2014-01-01') & (data['date'] < '2018-01-01')]
-    data = data.fillna('Unknown')
     data = data.reset_index(drop = True)
 
     return data
@@ -158,58 +186,59 @@ def data_feature_engineering(data):
     return data
 
 
-def column_splitter(data):
+def column_cleaner(column):
     """
-    Clean data that contains values split by :: and ||
-    to make the data easier to work with
+    Apply row_cleaner function a provided column from a dataframe
+    Compiles each cleaned row and returns a series for the cleaned column
 
     Parameters:
     -----------
-    data: str
-
-    Returns
-    -----------
-    cleaned_data: list
-
-    """
-
-    cleaned_data = []
-
-    data = data.split('||')
-    data = [i.split('::') for i in data]
-
-    for i in range(len(data)):
-        if len(data[0]) > 1:
-            cleaned_data.append(data[i][-1])
-
-        else:
-            cleaned_data.append('Unknown')
-
-    return cleaned_data
-
-
-def df_cleaner(data_column):
-    """
-    Apply data_clean function to columns in a
-    provided dataframe
-
-    Parameters:
-    -----------
-    data_column: df series
+    column: df series
 
     Returns:
     cleaned_column: df series
     """
-
+    
     cleaned_column = []
-
-    for i in range(len(data_column)):
-        cleaned_value = column_splitter(data_column[i])
-        cleaned_column.append(cleaned_value)
-
+    
+    for idx, _ in enumerate(column):
+        cleaned_row = row_cleaner(column[idx])
+        cleaned_column.append(cleaned_row)
+        
     cleaned_column = pd.Series(cleaned_column)
-
+    
     return cleaned_column
+
+
+def row_cleaner(row):
+    """
+    Clean a string value to split based on '::' and '||'
+    Compiles and returns list of second elements for each split row entry
+
+    Parameters:
+    -----------
+    row: str
+
+    Returns
+    -----------
+    cleaned_row: list
+
+    """
+    
+    if row is not np.nan:
+        cleaned_row = []
+        row = row.replace('||', '|')
+        row = row.replace('::', ':')
+        row = row.split('|')
+        row = [i.split(':') for i in row]
+    
+        for idx, _ in enumerate(row):
+            cleaned_row.append(row[idx][-1])
+            
+    else: 
+        cleaned_row = np.nan
+    
+    return cleaned_row
 
 
 def final_column_cleaning(data):
@@ -217,12 +246,11 @@ def final_column_cleaning(data):
     Apply df_cleaner function to columns that need it
     """
 
-    data['participant_age'] = df_cleaner(data['participant_age'])
-    data['participant_status'] = df_cleaner(data['participant_status'])
-    data['participant_type'] = df_cleaner(data['participant_type'])
-    data['participant_age_group'] = df_cleaner(data['participant_age_group'])
-    data['gun_type'] = df_cleaner(data['gun_type'])
-    data['participant_gender'] = df_cleaner(data['participant_gender'])
+    data['participant_age'] = column_cleaner(data['participant_age'])
+    data['participant_status'] = column_cleaner(data['participant_status'])
+    data['participant_type'] = column_cleaner(data['participant_type'])
+    data['gun_type'] = column_cleaner(data['gun_type'])
+    data['participant_gender'] = column_cleaner(data['participant_gender'])
     
     return data
 
@@ -231,19 +259,32 @@ def data_save(data):
     Save cleaned data for future use
     """
 
-    data_2014 = data.copy()[data['year'] == 2014]
-    data_2015 = data.copy()[data['year'] == 2015]
-    data_2016 = data.copy()[data['year'] == 2016]
-    data_2017 = data.copy()[data['year'] == 2017]
-
     cleaned_data_1 = data[:112798]
     cleaned_data_2 = data[112798:]
 
     cleaned_data_1.to_csv('data/cleaned_data/cleaned_data_1.csv', index = False)
     cleaned_data_2.to_csv('data/cleaned_data/cleaned_data_2.csv', index = False)
-    data_2014.to_csv('data/cleaned_data/cleaned_2014_data.csv', index = False)
-    data_2015.to_csv('data/cleaned_data/cleaned_2015_data.csv', index = False)
-    data_2016.to_csv('data/cleaned_data/cleaned_2016_data.csv', index = False)
-    data_2017.to_csv('data/cleaned_data/cleaned_2017_data.csv', index = False)
 
     return None
+
+
+def string_to_list(row_value):
+    """
+    Convert a string representation of a list to an actual list
+    
+    Parameters:
+    -----------
+    row: str
+
+    Returns
+    -----------
+    cleaned_row: list
+    """
+    
+    if row_value is np.nan:
+        return np.nan
+    
+    elif type(row_value) is str:
+        row_value = eval(row_value)
+        
+    return row_value

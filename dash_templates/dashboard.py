@@ -1,6 +1,4 @@
 import pandas as pd
-from ast import literal_eval
-
 import numpy as np
 from collections import Counter
 
@@ -10,31 +8,26 @@ import plotly.graph_objs as go
 
 import sys
 sys.path.insert(1, './data')
-from data_cleaning_functions import gun_map, us_state_abbrev #type: ignore
-from nav import navbar
+from data_cleaning_functions import gun_map, column_dtypes, string_to_list #type: ignore
+from nav import create_navbar
 
 
 # Load in data --------------------------------------------------------#
 def cleaned_data_reader():
-    cleaned_data_1 = pd.read_csv('./data/cleaned_data/cleaned_data_1.csv')
-    cleaned_data_2 = pd.read_csv('./data/cleaned_data/cleaned_data_2.csv')
+    cleaned_data_1 = pd.read_csv('./data/cleaned_data/cleaned_data_1.csv', dtype = column_dtypes)
+    cleaned_data_2 = pd.read_csv('./data/cleaned_data/cleaned_data_2.csv', dtype = column_dtypes)
     
     data = pd.concat([cleaned_data_1, cleaned_data_2], ignore_index = True)
 
-    data['participant_age'] = data['participant_age'].apply(literal_eval)
-    data['participant_status'] = data['participant_status'].apply(literal_eval)
-    data['participant_type'] = data['participant_type'].apply(literal_eval)
-    data['participant_age_group'] = data['participant_age_group'].apply(literal_eval)
-    data['gun_type'] = data['gun_type'].apply(literal_eval)
-    data['participant_gender'] = data['participant_gender'].apply(literal_eval)
+    data['participant_age'] = data['participant_age'].apply(lambda x: string_to_list(x))
+    data['participant_status'] = data['participant_status'].apply(lambda x: string_to_list(x))
+    data['participant_type'] = data['participant_type'].apply(lambda x: string_to_list(x))
+    data['gun_type'] = data['gun_type'].apply(lambda x: string_to_list(x))
+    data['participant_gender'] = data['participant_gender'].apply(lambda x: string_to_list(x))
 
     return data
 
 data = cleaned_data_reader()
-data_2014 = pd.read_csv('./data/cleaned_data/cleaned_2014_data.csv')
-data_2015 = pd.read_csv('./data/cleaned_data/cleaned_2015_data.csv')
-data_2016 = pd.read_csv('./data/cleaned_data/cleaned_2016_data.csv')
-data_2017 = pd.read_csv('./data/cleaned_data/cleaned_2017_data.csv')
 
 
 # Heatmap for incidents across the US -----------------------------------#
@@ -71,20 +64,22 @@ def heatmap_generator(data):
 
     return incident_heatmap
 
-incident_heatmap = heatmap_generator(data)
-
 
 # Barchart for top dangerous states -----------------------------------#
 def top_states_generator(data):
+    data['n_injured+killed'] = data['n_killed'] + data['n_injured']
     top_10_states = data['state'].value_counts()[:10].index.tolist()
     dangerous_states = data[data['state'].isin(top_10_states)]
-    states_n_injured = dangerous_states.groupby('state')['n_injured'].sum()
-    states_n_killed = dangerous_states.groupby('state')['n_killed'].sum()
+
+    states_counts = dangerous_states.groupby('state')['n_injured+killed'].sum()
+    states_counts = states_counts.sort_values(ascending = False)
+    states_n_injured = dangerous_states.groupby('state')['n_injured'].sum().sort_values(ascending = False)
+    states_n_killed = dangerous_states.groupby('state')['n_killed'].sum().sort_values(ascending = False)
 
 
     trace1 = go.Bar(
-        x = data['state'].value_counts()[:10].index.tolist(),
-        y = data['state'].value_counts()[:10],
+        x = states_counts.index.tolist(),
+        y = states_counts.tolist(),
         name = 'Counts'
     )
 
@@ -102,7 +97,6 @@ def top_states_generator(data):
 
     top_states = dcc.Graph(
         className = 'top-states',
-        # style = {'width': '30vw'},
         style = {'width': '45vw', 'height': '34vh'},
         figure = {
             'data': [trace1, trace2, trace3],
@@ -116,20 +110,22 @@ def top_states_generator(data):
 
     return top_states
 
-top_states = top_states_generator(data)
-
 
 # Barchart for top dangerous cities/counties --------------------------#
 def top_cities_generator(data):
+    data['n_injured+killed'] = data['n_killed'] + data['n_injured']
     top_10_cities = data['city_or_county'].value_counts()[:10].index.tolist()
     dangerous_cities = data[data['city_or_county'].isin(top_10_cities)]
-    cities_n_injured = dangerous_cities.groupby('city_or_county')['n_injured'].sum()
-    cities_n_killed = dangerous_cities.groupby('city_or_county')['n_killed'].sum()
+
+    cities_counts = dangerous_cities.groupby('city_or_county')['n_injured+killed'].sum()
+    cities_counts = cities_counts.sort_values(ascending = False)
+    cities_n_injured = dangerous_cities.groupby('city_or_county')['n_injured'].sum().sort_values(ascending = False)
+    cities_n_killed = dangerous_cities.groupby('city_or_county')['n_killed'].sum().sort_values(ascending = False)
 
 
     trace1 = go.Bar(
-        x = data['city_or_county'].value_counts().index.tolist(),
-        y = data['city_or_county'].value_counts()[:10],
+        x = cities_counts.index.tolist(),
+        y = cities_counts.tolist(),
         name = 'Counts'
     )
 
@@ -159,8 +155,6 @@ def top_cities_generator(data):
     )
 
     return top_cities
-
-top_cities = top_cities_generator(data)
 
 
 # Barchart for average incidents per weekday --------------------------#
@@ -196,16 +190,14 @@ def incidents_per_day_generator(data):
 
     return incidents_per_day
 
-incidents_per_day = incidents_per_day_generator(data)
-
 
 # Barchart for incidents per month ------------------------------------#
-def incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_2017):
+def incidents_per_month_generator(data):
     month_counts_total = Counter(data['month'])
-    month_counts_2014 = Counter(data_2014['month'])
-    month_counts_2015 = Counter(data_2015['month'])
-    month_counts_2016 = Counter(data_2016['month'])
-    month_counts_2017 = Counter(data_2017['month'])
+    month_counts_2014 = Counter(data[data['year'] == 2014]['month'])
+    month_counts_2015 = Counter(data[data['year'] == 2014]['month'])
+    month_counts_2016 = Counter(data[data['year'] == 2016]['month'])
+    month_counts_2017 = Counter(data[data['year'] == 2017]['month'])
 
     months = list(month_counts_total)
     counts = list(month_counts_total.values())
@@ -247,7 +239,7 @@ def incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_20
 
     trace5 = go.Bar(
         x = months,
-        y = list(month_counts_2014.values()),
+        y = list(month_counts_2017.values()),
         name = 2017,
         visible = 'legendonly'
     )
@@ -267,26 +259,16 @@ def incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_20
 
     return incidents_per_month
 
-incidents_per_month = incidents_per_month_generator(data, data_2014, data_2015, data_2016, data_2017)
-
 
 # Barchart for incidents per year -------------------------------------#
 def incidents_per_year_generator(data):
-    years = data['year'].value_counts().index.tolist()
-    counts = data['year'].value_counts().tolist()
-    casualties_by_year = data.groupby(['year']).sum()
-
-    incident_counts_by_year = pd.DataFrame(
-        {
-            'years': years,
-            'counts': counts
-        }
-    )
-
+    data['n_injured+killed'] = data['n_injured'] + data['n_killed']
+    casualties_by_year = data[['year', 'n_killed', 'n_injured']].groupby('year').sum()
+    data = data.groupby('year')['n_injured+killed'].sum().reset_index()
 
     trace1 = go.Bar(
-        x = incident_counts_by_year['years'],
-        y = incident_counts_by_year['counts'],
+        x = data['year'],
+        y = data['n_injured+killed'],
         name = 'Incident Counts',
     )
 
@@ -317,37 +299,6 @@ def incidents_per_year_generator(data):
 
     return incidents_per_year
 
-incidents_per_year = incidents_per_year_generator(data)
-
-
-# Barchart for top location descriptions ------------------------------#
-def top_locations_generator(data):
-    locations = data['location_description'].dropna()
-    locations = locations.str.lower()
-
-    trace1 = go.Bar(
-        x = locations.value_counts()[1:11].index.tolist(),
-        y = locations.value_counts()[1:11].tolist(),
-        name = 'Locations'
-    )
-
-    top_locations = dcc.Graph(
-        className = 'top-locations',
-        style = {'width': '30vw'},
-        figure = {
-            'data': [trace1],
-            'layout': go.Layout(
-                title = 'Top 10 Locations',
-                xaxis = {'title': 'Location', 'tickangle': 15},
-                yaxis = {'title': 'Counts'}
-            )
-        }
-    )
-
-    return top_locations
-
-top_locations = top_locations_generator(data)
-
 
 # Line plot for age distributions -------------------------------------#
 def age_distribution_generator(data):
@@ -355,54 +306,51 @@ def age_distribution_generator(data):
     types = data['participant_type'].tolist()
     age_list = []
 
-    for i in range(len(ages)):
-        for j in range(len(ages[i])):
-            if ages[i][j] != 'Unknown':
-                age_list.append(ages[i][j])
-                
+    for idx, _ in enumerate(ages):
+        if isinstance(ages[idx], list):
+            for idx2, _ in enumerate(ages[idx]):
+                age_list.append(ages[idx][idx2])
+
     age_list = list(map(int, age_list))
     unique_ages = list(sorted(set(age_list)))
     ages_count = [0] * len(unique_ages)
 
-    for i in range(len(age_list)):
-        for j in range(len(unique_ages)):
-            if unique_ages[j] == age_list[i]:
-                ages_count[j] += 1
+    for idx, _ in enumerate(age_list):
+        for idx2, _ in enumerate(unique_ages):
+            if unique_ages[idx2] == age_list[idx]:
+                ages_count[idx2] += 1
 
 
     victim_age_list = []
+    suspect_age_list = []
 
-    for i in range(len(ages)):
-        for j in range(len(ages[i])):
-            if 'Victim' in types[i][j] and ages[i][j] != 'Unknown':
-                victim_age_list.append(ages[i][j])
-                
+    for idx, _ in enumerate(ages):
+        if ages[idx] is not np.nan:
+            for idx2, _ in enumerate(ages[idx]):
+                if 'Victim' in types[idx][idx2] and ages[idx][idx2] is not np.nan:
+                    victim_age_list.append(ages[idx][idx2])
+
+                elif 'Suspect' in types[idx][idx2] and ages[idx][idx2] is not np.nan:
+                    suspect_age_list.append(ages[idx][idx2])
+
     victim_age_list = list(map(int, victim_age_list))
     victim_unique_ages = list(sorted(set(victim_age_list)))
     victim_ages_count = [0] * len(victim_unique_ages)
 
-    for i in range(len(victim_age_list)):
-        for j in range(len(victim_unique_ages)):
-            if victim_unique_ages[j] == victim_age_list[i]:
-                victim_ages_count[j] += 1
-
-
-    suspect_age_list = []
-
-    for i in range(len(ages)):
-        for j in range(len(ages[i])):
-            if 'Suspect' in types[i][j] and ages[i][j] != 'Unknown':
-                suspect_age_list.append(ages[i][j])
-
-                
     suspect_age_list = list(map(int, suspect_age_list))
     suspect_unique_ages = list(sorted(set(suspect_age_list)))
     suspect_ages_count = [0] * len(suspect_unique_ages)
 
-    for i in range(len(suspect_age_list)):
-        for j in range(len(suspect_unique_ages)):
-            if suspect_unique_ages[j] == suspect_age_list[i]:
-                suspect_ages_count[j] += 1
+
+    for idx, _ in enumerate(victim_age_list):
+        for idx2, _ in enumerate(victim_unique_ages):
+            if victim_unique_ages[idx2] == victim_age_list[idx]:
+                victim_ages_count[idx2] += 1
+
+    for idx, _ in enumerate(suspect_age_list):
+        for idx2, _ in enumerate(suspect_unique_ages):
+            if suspect_unique_ages[idx2] == suspect_age_list[idx]:
+                suspect_ages_count[idx2] += 1
                 
 
     trace1 = go.Scatter(
@@ -441,27 +389,25 @@ def age_distribution_generator(data):
 
     return age_distribution
 
-age_distribution = age_distribution_generator(data)
-
 
 # Pie chart for gun type distribution ---------------------------------#
 def gun_type_distribution_generator(data):
     gun_list = []
     gun_types = data['gun_type'].tolist()
 
-    for i in range(len(gun_types)):
-        for j in range(len(gun_types[i])):
-            if gun_types[i][j] != 'Unknown':
-                gun_list.append(gun_types[i][j])
-                
+    for idx, _ in enumerate(gun_types):
+        if gun_types[idx] is not np.nan:
+            for idx2, _ in enumerate(gun_types[idx]):
+                if gun_types[idx][idx2] is not np.nan:
+                    gun_list.append(gun_types[idx][idx2])
+                    
     unique_guns = list(set(gun_list))
     gun_counts = [0] * len(unique_guns)
 
-    for i in range(len(gun_list)):
-        for j in range(len(unique_guns)):
-            if unique_guns[j] == gun_list[i]:
-                gun_counts[j] += 1
-
+    for idx, _ in enumerate(gun_list):
+        for idx2, _ in enumerate(unique_guns):
+            if unique_guns[idx2] == gun_list[idx]:
+                gun_counts[idx2] += 1
 
     temp_gun_type = pd.DataFrame(
         {
@@ -494,20 +440,16 @@ def gun_type_distribution_generator(data):
 
     return gun_type_distribution
 
-gun_type_distribution = gun_type_distribution_generator(data)
-
 
 # Pie chart for gun counts distribution -------------------------------#
 def gun_count_distribution_generator(data):
-    data_n_guns_drop = data[['n_guns_involved']]
-    data_n_guns_drop = data_n_guns_drop.replace('Unknown', np.nan).dropna()
-    data_n_guns_drop = data_n_guns_drop.reset_index(drop = True)
+    data_n_guns_drop = data[['n_guns_involved']].dropna().reset_index(drop = True)
     data_n_guns_drop = data_n_guns_drop['n_guns_involved'].tolist()
     data_n_guns_drop = list(map(float, data_n_guns_drop))
 
-    for i in range(len(data_n_guns_drop)):
-        if data_n_guns_drop[i] >= 5:
-            data_n_guns_drop[i] = '5+'
+    for idx, _ in enumerate(data_n_guns_drop):
+        if data_n_guns_drop[idx] >= 5:
+            data_n_guns_drop[idx] = '5+'
 
 
     n_guns = pd.DataFrame(
@@ -542,8 +484,6 @@ def gun_count_distribution_generator(data):
 
     return gun_count_distribution
 
-gun_count_distribution = gun_count_distribution_generator(data)
-
 
 # Pie chart of gender distribution for suspects -----------------------#
 def suspect_gender_distribution_generator(data):
@@ -551,11 +491,12 @@ def suspect_gender_distribution_generator(data):
     types = data['participant_type'].tolist()
     suspect_gender_list = []
 
-    for i in range(len(genders)):
-        for j in range(len(genders[i])):
-            if genders[i][j] != 'Unknown' and 'Suspect' in types[i][j]:
-                suspect_gender_list.append(genders[i][j])
-
+    for idx, _ in enumerate(genders):
+        if genders[idx] is not np.nan:
+            for idx2, _ in enumerate(genders[idx]):
+                if genders[idx][idx2] is not np.nan and 'Suspect' in types[idx][idx2]:
+                    suspect_gender_list.append(genders[idx][idx2])
+                    
     gender_labels = ['Male', 'Female']
     suspect_gender_counts = [suspect_gender_list.count('Male'), suspect_gender_list.count('Female')]
 
@@ -580,8 +521,6 @@ def suspect_gender_distribution_generator(data):
 
     return suspect_gender_distribution
 
-suspect_gender_distribution = suspect_gender_distribution_generator(data)
-
 
 # Pie chart of gender distribution for victims ------------------------#
 def victim_gender_distribution_generator(data):
@@ -589,11 +528,12 @@ def victim_gender_distribution_generator(data):
     types = data['participant_type'].tolist()
     victim_gender_list = []
 
-    for i in range(len(genders)):
-        for j in range(len(genders[i])):
-            if genders[i][j] != 'Unknown' and 'Victim' in types[i][j]:
-                victim_gender_list.append(genders[i][j])
-
+    for idx, _ in enumerate(genders):
+        if genders[idx] is not np.nan:
+            for idx2, _ in enumerate(genders[idx]):
+                if genders[idx][idx2] is not np.nan and 'Victim' in types[idx][idx2]:
+                    victim_gender_list.append(genders[idx][idx2])
+                
     gender_labels = ['Male', 'Female']
     victim_gender_counts = [victim_gender_list.count('Male'), victim_gender_list.count('Female')]
 
@@ -618,13 +558,23 @@ def victim_gender_distribution_generator(data):
 
     return victim_gender_distribution
 
-victim_gender_distribution = victim_gender_distribution_generator(data)
-
 
 # Dashboard Layout ----------------------------------------------------#
+incident_heatmap = heatmap_generator(data)
+top_states = top_states_generator(data)
+top_cities = top_cities_generator(data)
+incidents_per_day = incidents_per_day_generator(data)
+incidents_per_month = incidents_per_month_generator(data)
+incidents_per_year = incidents_per_year_generator(data)
+age_distribution = age_distribution_generator(data)
+gun_type_distribution = gun_type_distribution_generator(data)
+gun_count_distribution = gun_count_distribution_generator(data)
+suspect_gender_distribution = suspect_gender_distribution_generator(data)
+victim_gender_distribution = victim_gender_distribution_generator(data)
+
 dashboard_app_layout = html.Div(
     children = [
-        navbar,
+        create_navbar(),
 
         html.Div(
             className = 'heatmap-state-city-container ',
@@ -647,7 +597,6 @@ dashboard_app_layout = html.Div(
                 incidents_per_day,
                 incidents_per_month,
                 incidents_per_year
-                # top_locations
             ]
         ),
 
