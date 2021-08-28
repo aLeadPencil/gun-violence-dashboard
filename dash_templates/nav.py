@@ -19,10 +19,6 @@ def create_navbar():
                         html.A(
                             href='/dashboard',
                             children=['Dashboard']
-                        ),
-                        html.A(
-                            href='/contact',
-                            children=['Contact']
                         )
                     ]
                 )
