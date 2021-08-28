@@ -2,8 +2,8 @@
 html {
     font: 100%/1.5 Georgia, serif;
     background-color: #4e97c8;
-    overflow-y: scroll;
-    scroll-behavior: smooth;
+    /* overflow-y: scroll;
+    scroll-behavior: smooth; */
 }
 
 body {
@@ -84,6 +84,14 @@ body {
 }
 
 
+/* Data Table  */
+.datatable-container {
+    margin: 0px 10px;
+    /* margin-bottom: 22.7vh; */
+    /* margin-bottom: 10px; */
+}
+
+
 /* Heatmap + Top States + Top Cities */
 .heatmap-state-city-container {
     display: flex;
@@ -144,12 +152,6 @@ body {
     box-shadow: 2px 2px 2px #165a72
 }
 
-/* .top-locations {
-    display: flex;
-    margin-left: 0.5vw;
-    box-shadow: 2px 2px 2px #165a72
-} */
-
 
 /* Age Distribution */
 .age-distribution-container {
@@ -169,7 +171,7 @@ body {
     display: flex;
     justify-content: center;
     padding: 10px 0px;
-    padding-bottom: 20px;
+    padding-bottom: 50px;
 }
 
 .gun-type-distribution {
@@ -193,4 +195,28 @@ body {
     display: flex;
     margin-left: 0.33vw;
     box-shadow: 2px 2px 2px #165a72
+}
+
+
+/* Footer */
+.footer {
+    border-top: 0.1em solid white;
+    bottom: 0;
+    width: 100%;
+    height: 5vh;
+}
+
+.footer ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+}
+
+.footer ul li a {
+    display: flex;
+    float: right;
+    color: white;
+    text-decoration: none;
+    margin: 0px 50px;
+    font-size: 0.8em;
 }

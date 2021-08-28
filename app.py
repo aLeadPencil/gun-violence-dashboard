@@ -5,6 +5,7 @@ import dash_html_components as html
 import sys
 sys.path.insert(1, 'dash_templates')
 from nav import create_navbar #type: ignore
+from footer import create_footer_dashboard, create_footer_datatable #type: ignore
 from data_table import generate_table #type: ignore
 from dashboard import  cleaned_data_reader, heatmap_generator, top_states_generator, top_cities_generator, incidents_per_day_generator, incidents_per_month_generator, incidents_per_year_generator, age_distribution_generator, gun_type_distribution_generator, gun_count_distribution_generator, suspect_gender_distribution_generator, victim_gender_distribution_generator#type: ignore
 
@@ -27,7 +28,7 @@ dashboard_app = dash.Dash(
     __name__,
     server = server,
     url_base_pathname = '/dashboard/',
-    title = 'Dashboard',
+    title = 'Dashboard'
 )
 
 
@@ -44,10 +45,6 @@ def data_preview():
 def dashboard():
     return redirect('/dashboard/')
 
-@server.route('/contact/')
-def contact():
-    return render_template('contact.html')
-
 
 # Dash layouts
 generated_table = generate_table()
@@ -56,8 +53,16 @@ data_preview_app.layout = html.Div(
     children = [
         create_navbar(),
         html.Br(),
-        generated_table
-    ]
+
+        html.Div(
+            className = 'datatable-container',
+            children = [
+                generated_table
+            ]
+        ),
+
+        create_footer_datatable()
+    ],
 )
 
 
@@ -119,6 +124,8 @@ dashboard_app.layout = html.Div(
                 victim_gender_distribution
             ],
         ),
+
+        create_footer_dashboard()
     ]
 )
 

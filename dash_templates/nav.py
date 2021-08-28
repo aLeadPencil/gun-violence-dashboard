@@ -31,3 +31,6 @@ def create_navbar():
     )
 
     return navbar
+
+if __name__ == '__main__':
+    create_navbar()

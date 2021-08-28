@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href=" {{ url_for('static', filename='css/styles.css') }} ">
-    {% block head %} {% endblock %}
 </head>
 
 <header>
@@ -15,11 +14,18 @@
             <a href="/">Home</a>
             <a href="/data-preview">Data Preview</a>
             <a href="/dashboard">Dashboard</a>
-            <a href="/contact">Contact</a>
         </div>
     </div>
 </header>
 
 {% block body %} {% endblock %}
+
+<footer class = 'footer'>
+    <ul>
+        <li><a href="https://www.linkedin.com/in/kvn-chu/" target="_blank">LinkedIn</a></li>
+        <li><a href="https://github.com/aLeadPencil" target="_blank">Github</a></li>
+        <li><a href="mailto:kchu8150@gmail.com" target="_blank">Email Me</a></li>
+    </ul>
+</footer>
 
 </html>

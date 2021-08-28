@@ -18,7 +18,7 @@ def generate_table():
         },
 
         style_table = {
-            'overflowX': 'auto'
+            'overflowX': 'auto',
         },
         
         columns = [{'name': i, 'id': i} for i in data.columns],
@@ -28,14 +28,5 @@ def generate_table():
 
     return generated_table
 
-
-# Data Preview Layout
-generated_table = generate_table()
-
-data_preview_app_layout = html.Div(
-    children = [
-        create_navbar(),
-        html.Br(),
-        generated_table
-    ]
-)
+if __name__ == '__main__':
+    generate_table()

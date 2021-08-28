@@ -52,7 +52,8 @@ def heatmap_generator(data):
 
     incident_heatmap = dcc.Graph(
         className = 'incident-heatmap',
-        style = {'width': '45vw', 'height': '70vh'},
+        # style = {'width': '45vw', 'height': '70vh'},
+        style = {'width': '45vw', 'height': '50vh'},
         figure = {
             'data': [trace1],
             'layout': go.Layout(
@@ -97,7 +98,8 @@ def top_states_generator(data):
 
     top_states = dcc.Graph(
         className = 'top-states',
-        style = {'width': '45vw', 'height': '34vh'},
+        # style = {'width': '45vw', 'height': '34vh'},
+        style = {'width': '45vw', 'height': '24vh'},
         figure = {
             'data': [trace1, trace2, trace3],
             'layout': go.Layout(
@@ -143,7 +145,8 @@ def top_cities_generator(data):
 
     top_cities = dcc.Graph(
         className = 'top-cities',
-        style = {'width': '45vw', 'height': '34vh'},
+        # style = {'width': '45vw', 'height': '34vh'},
+        style = {'width': '45vw', 'height': '24vh'},
         figure = {
             'data': [trace1, trace2, trace3],
             'layout': go.Layout(
@@ -559,62 +562,17 @@ def victim_gender_distribution_generator(data):
     return victim_gender_distribution
 
 
-# Dashboard Layout ----------------------------------------------------#
-# incident_heatmap = heatmap_generator(data)
-# top_states = top_states_generator(data)
-# top_cities = top_cities_generator(data)
-# incidents_per_day = incidents_per_day_generator(data)
-# incidents_per_month = incidents_per_month_generator(data)
-# incidents_per_year = incidents_per_year_generator(data)
-# age_distribution = age_distribution_generator(data)
-# gun_type_distribution = gun_type_distribution_generator(data)
-# gun_count_distribution = gun_count_distribution_generator(data)
-# suspect_gender_distribution = suspect_gender_distribution_generator(data)
-# victim_gender_distribution = victim_gender_distribution_generator(data)
+if __name__ == '__main__':
+    data = 'read_csv later'
 
-# dashboard_app_layout = html.Div(
-#     children = [
-#         create_navbar(),
-
-#         html.Div(
-#             className = 'heatmap-state-city-container ',
-#             children = [
-#                 incident_heatmap,
-
-#                 html.Div(
-#                     className = 'state-city-container',
-#                     children = [
-#                         top_states,
-#                         top_cities
-#                     ]
-#                 )
-#             ]
-#         ),
-
-#         html.Div(
-#             className = 'time-container',
-#             children = [
-#                 incidents_per_day,
-#                 incidents_per_month,
-#                 incidents_per_year
-#             ]
-#         ),
-
-#         html.Div(
-#             className = 'age-distribution-container',
-#             children = [
-#                 age_distribution
-#             ]
-#         ),
-
-#         html.Div(
-#             className = 'gender-gun-container',
-#             children = [
-#                 gun_type_distribution,
-#                 gun_count_distribution,
-#                 suspect_gender_distribution,
-#                 victim_gender_distribution
-#             ],
-#         ),
-#     ]
-# )
+    incident_heatmap = heatmap_generator(data)
+    top_states = top_states_generator(data)
+    top_cities = top_cities_generator(data)
+    incidents_per_day = incidents_per_day_generator(data)
+    incidents_per_month = incidents_per_month_generator(data)
+    incidents_per_year = incidents_per_year_generator(data)
+    age_distribution = age_distribution_generator(data)
+    gun_type_distribution = gun_type_distribution_generator(data)
+    gun_count_distribution = gun_count_distribution_generator(data)
+    suspect_gender_distribution = suspect_gender_distribution_generator(data)
+    victim_gender_distribution = victim_gender_distribution_generator(data)
