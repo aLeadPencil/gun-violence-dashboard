@@ -66,8 +66,6 @@ data_preview_app.layout = html.Div(
 )
 
 
-# dashboard_app.layout = dashboard_app_layout
-
 incident_heatmap = heatmap_generator(data)
 top_states = top_states_generator(data)
 top_cities = top_cities_generator(data)
@@ -128,7 +126,6 @@ dashboard_app.layout = html.Div(
         create_footer_dashboard()
     ]
 )
-
 
 
 # Run the server

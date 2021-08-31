@@ -1,4 +1,3 @@
-from dash_templates.nav import create_navbar
 import dash_html_components as html
 
 def create_footer_dashboard():

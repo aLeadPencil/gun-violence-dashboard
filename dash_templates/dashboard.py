@@ -9,7 +9,6 @@ import plotly.graph_objs as go
 import sys
 sys.path.insert(1, './data')
 from data_cleaning_functions import gun_map, column_dtypes, string_to_list #type: ignore
-from nav import create_navbar
 
 
 # Load in data --------------------------------------------------------#

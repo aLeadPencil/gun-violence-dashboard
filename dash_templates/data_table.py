@@ -1,7 +1,6 @@
 import dash_table
 import pandas as pd
 import dash_html_components as html
-from nav import create_navbar   
 
 import sys
 sys.path.insert(1, './data')
