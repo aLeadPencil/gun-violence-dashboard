@@ -27,8 +27,6 @@ def cleaned_data_reader():
 
     return data
 
-# data = cleaned_data_reader()
-
 
 # Heatmap for incidents across the US -----------------------------------#
 def heatmap_generator(data):
@@ -52,7 +50,6 @@ def heatmap_generator(data):
 
     incident_heatmap = dcc.Graph(
         className = 'incident-heatmap',
-        # style = {'width': '45vw', 'height': '70vh'},
         style = {'width': '45vw', 'height': '50vh'},
         figure = {
             'data': [trace1],
@@ -98,7 +95,6 @@ def top_states_generator(data):
 
     top_states = dcc.Graph(
         className = 'top-states',
-        # style = {'width': '45vw', 'height': '34vh'},
         style = {'width': '45vw', 'height': '24vh'},
         figure = {
             'data': [trace1, trace2, trace3],
@@ -145,7 +141,6 @@ def top_cities_generator(data):
 
     top_cities = dcc.Graph(
         className = 'top-cities',
-        # style = {'width': '45vw', 'height': '34vh'},
         style = {'width': '45vw', 'height': '24vh'},
         figure = {
             'data': [trace1, trace2, trace3],
@@ -563,7 +558,7 @@ def victim_gender_distribution_generator(data):
 
 
 if __name__ == '__main__':
-    data = 'read_csv later'
+    data = cleaned_data_reader()
 
     incident_heatmap = heatmap_generator(data)
     top_states = top_states_generator(data)

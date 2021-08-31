@@ -4,7 +4,7 @@ import dash_html_components as html
 def create_footer_dashboard():
     footer = html.Footer(
         html.Div(
-            className = 'footer',
+            className = 'contact',
             
             children = html.Ul(
                 children = [
@@ -38,7 +38,7 @@ def create_footer_dashboard():
 def create_footer_datatable():
     footer = html.Footer(
         html.Div(
-            className = 'footer',
+            className = 'contact',
             
             children = html.Ul(
                 children = [
@@ -64,8 +64,7 @@ def create_footer_datatable():
                     )
                 ]
             )
-        ),
-        style = {'position': 'fixed', 'width': '100%', 'bottom': '0'}
+        )
     )
 
     return footer

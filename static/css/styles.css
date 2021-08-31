@@ -3,10 +3,12 @@
 html {
     font: 100%/1.5 Georgia, serif;
     background-color: #4e97c8;
+    height: 100%;
 }
 
 body {
     margin: 0;
+    height: 100%;
 }
 
 
@@ -86,7 +88,7 @@ body {
 
 
 /* Footer */
-.footer {
+.contact {
     position: fixed;
     border-top: 0.1em solid white;
     bottom: 0;
@@ -94,13 +96,13 @@ body {
     height: 5vh;
 }
 
-.footer ul {
+.contact ul {
     display: flex;
     justify-content: center;
     list-style: none;
 }
 
-.footer ul li a {
+.contact ul li a {
     display: flex;
     float: right;
     color: white;
