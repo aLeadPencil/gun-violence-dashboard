@@ -10,21 +10,24 @@ def create_footer_dashboard():
                     html.Li(
                         html.A(
                             href = 'https://www.linkedin.com/in/kvn-chu/',
-                            children = ['LinkedIn']
+                            target = '_blank',
+                            children = ['LinkedIn'],
                         )
                     ),
 
                     html.Li(
                         html.A(
                             href = 'https://github.com/aLeadPencil',
-                            children = ['GitHub']
+                            target = '_blank',
+                            children = ['GitHub'],
                         )
                     ),
 
                     html.Li(
                         html.A(
                             href = 'mailto:kchu8150@gmail.com',
-                            children = ['Email Me']
+                            target = '_blank',
+                            children = ['Email Me'],
                         )
                     )
                 ]
@@ -44,6 +47,7 @@ def create_footer_datatable():
                     html.Li(
                         html.A(
                             href = 'https://www.linkedin.com/in/kvn-chu/',
+                            target = '_blank',
                             children = ['LinkedIn']
                         )
                     ),
@@ -51,6 +55,7 @@ def create_footer_datatable():
                     html.Li(
                         html.A(
                             href = 'https://github.com/aLeadPencil',
+                            target = '_blank',
                             children = ['GitHub']
                         )
                     ),
@@ -58,6 +63,7 @@ def create_footer_datatable():
                     html.Li(
                         html.A(
                             href = 'mailto:kchu8150@gmail.com',
+                            target = '_blank',
                             children = ['Email Me']
                         )
                     )
