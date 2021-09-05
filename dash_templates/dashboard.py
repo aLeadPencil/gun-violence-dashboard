@@ -49,7 +49,7 @@ def heatmap_generator(data):
 
     incident_heatmap = dcc.Graph(
         className = 'incident-heatmap',
-        style = {'width': '45vw', 'height': '60vh'},
+        style = {'width': '45vw', 'height': '70vh'},
         figure = {
             'data': [trace1],
             'layout': go.Layout(
@@ -94,7 +94,7 @@ def top_states_generator(data):
 
     top_states = dcc.Graph(
         className = 'top-states',
-        style = {'width': '45vw', 'height': '29vh'},
+        style = {'width': '45vw', 'height': '34vh'},
         figure = {
             'data': [trace1, trace2, trace3],
             'layout': go.Layout(
@@ -140,7 +140,7 @@ def top_cities_generator(data):
 
     top_cities = dcc.Graph(
         className = 'top-cities',
-        style = {'width': '45vw', 'height': '29vh'},
+        style = {'width': '45vw', 'height': '34vh'},
         figure = {
             'data': [trace1, trace2, trace3],
             'layout': go.Layout(
